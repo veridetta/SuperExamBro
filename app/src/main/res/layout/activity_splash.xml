@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SplashActivity">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center">
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="@dimen/_70sdp"
+                android:layout_height="@dimen/_70sdp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@mipmap/ic_launcher" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_alignParentBottom="true"
+            android:padding="@dimen/_8sdp"
+            android:gravity="center">
+            <TextView
+                android:id="@+id/txt_opening"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="@string/membuka_aplikasi"
+                android:textColor="@color/colorPrimary"
+                android:layout_marginBottom="@dimen/_6sdp"
+                android:textSize="@dimen/_11sdp" />
+            <com.akexorcist.roundcornerprogressbar.TextRoundCornerProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/_3sdp"
+                android:id="@+id/progressBar"
+                app:rcBackgroundColor="@color/gray"
+                app:rcMax="100"
+                app:rcProgress="10"
+                app:rcProgressColor="@color/colorPrimaryDark"
+                app:rcTextProgress="89"
+                app:rcAnimationEnable="true"
+                app:rcAnimationSpeedScale="1"
+                app:rcTextProgressColor="@color/colorBlack"
+                app:rcTextProgressSize="@dimen/_9sdp"
+                />
+        </LinearLayout>
+        <include layout="@layout/cek_koneksi"/>
+    </RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

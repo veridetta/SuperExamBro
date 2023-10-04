@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission android:name="android.permission.SET_WALLPAPER" />
+    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.DISABLE_KEYGUARD" />
+    <uses-permission
+        android:name="android.permission.BIND_ACCESSIBILITY_SERVICE"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+
+    <meta-data
+        android:name="com.google.android.gms.ads.AD_MANAGER_APP"
+        android:value="true" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.SuperExamBro"
+        tools:targetApi="31">
+        <activity
+            android:name=".activity.siswa.DetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.siswa.IzinActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.guru.auth.EditActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.guru.auth.DetailHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.guru.LoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.guru.RegisterActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.guru.auth.GuruActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.siswa.SiswaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".activity.RoleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SplashActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".lockactivity.SetWallpaperActivity"
+            android:exported="false" />
+        <activity
+            android:name=".lockactivity.LockScreenActivity"
+            android:exported="false" />
+        <activity
+            android:name=".lockactivity.ListWallpaperActivity"
+            android:exported="false" />
+        <activity
+            android:name=".lockactivity.ChangPassWordActivity"
+            android:exported="false" />
+        <activity
+            android:name=".lockactivity.MainActivity"
+            android:exported="true" />
+
+        <receiver
+            android:name=".lock.Restarter"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="restartservice" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".lockutils.LockScreenService"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".lockutils.LockAccessibilityService"
+            android:exported="true"
+            android:label="@string/app_name"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibilityservice" />
+        </service>
+
+        <receiver
+            android:name=".lockutils.LockDeviceAdminReceiver"
+            android:description="@string/permission_device_admin_description"
+            android:exported="true"
+            android:label="Cerberus"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin" />
+
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>
