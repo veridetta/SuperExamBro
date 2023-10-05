@@ -155,7 +155,10 @@ class DetailActivity : AppCompatActivity() {
                 // Mengaktifkan wakelock
                 wakeLock.acquire()
                 val myIntent = Intent(applicationContext, LockScreenActivity::class.java)
-                myIntent.putExtra("test_lock", true)
+                myIntent.putExtra("test_lock", false)
+                //put document id
+                myIntent.putExtra("documentId", documentReference.id)
+                myIntent.putExtra("durasi", ujianData["durasi"].toString())
                 startActivity(myIntent)
                 //kemudian kembali normal saat selesai tes
             }
@@ -164,4 +167,5 @@ class DetailActivity : AppCompatActivity() {
                 showSnackBar(contentView,"Gagal menyimpan data ${e.message}")
             }
     }
+
 }

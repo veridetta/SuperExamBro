@@ -4,6 +4,106 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/cotentView"
+    tools:context=".lockactivity.LockScreenActivity">
+
+    <WebView
+        android:id="@+id/webView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/_30sdp"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/kuning_muda"
+            android:orientation="horizontal"
+            android:padding="@dimen/_12sdp" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/background_rounded"
+            android:backgroundTint="@color/kuning_muda"
+            android:layout_centerInParent="true"
+            android:padding="@dimen/_8sdp"
+            android:orientation="horizontal">
+            <TextView
+                android:id="@+id/tvTimer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:39:00"
+                android:textSize="@dimen/_13sdp"/>
+        </LinearLayout>
+        </LinearLayout>
+        <ImageButton
+            android:id="@+id/btnRefresh"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_refresh"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="@dimen/_4sdp"
+            android:background="?android:attr/selectableItemBackground"
+            android:contentDescription="Refresh" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/kuning_muda"
+            android:orientation="horizontal"
+            android:layout_alignParentBottom="true"
+            android:padding="@dimen/_4sdp" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="@dimen/_8sdp"
+            android:orientation="horizontal">
+            <LinearLayout
+                android:id="@+id/btnSelesai"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/background_rounded"
+                android:backgroundTint="@color/kuning_muda"
+                android:padding="@dimen/_8sdp"
+                android:orientation="horizontal">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Selesai"
+                    android:textSize="@dimen/_13sdp"/>
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+    <include
+        android:id="@+id/include"
+        layout="@layout/ly_konfirm" />
+</RelativeLayout>
+
+<!--<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_gravity="center"
     android:layout_centerHorizontal="true"
     android:layout_centerVertical="true"
@@ -193,3 +293,4 @@
         android:layout_height="200dp"
         />
 </RelativeLayout>
+-->

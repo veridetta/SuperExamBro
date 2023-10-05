@@ -21,14 +21,17 @@ import android.util.Log
 import android.view.Menu
 import android.view.View
 import android.view.WindowManager
+import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.MediaController
+import android.widget.ProgressBar
 import android.widget.RelativeLayout
 import android.widget.Spinner
 import android.widget.TextView
@@ -38,12 +41,34 @@ import androidx.appcompat.app.AppCompatActivity
 import com.androidsx.rateme.OnRatingListener
 import com.androidsx.rateme.OnRatingListener.RatingAction
 import com.androidsx.rateme.RateMeDialog
+import com.google.firebase.firestore.FirebaseFirestore
 import com.vr.superexambro.R
+import com.vr.superexambro.helper.startTimer
+import com.vr.superexambro.helper.unlockLockScreen
+import com.vr.superexambro.helper.updateFirebase
 import com.vr.superexambro.lockutils.LockScreen
 import java.util.Timer
 import java.util.TimerTask
 
 class LockScreenActivity() : AppCompatActivity() {
+    lateinit var btnRefresh :ImageButton
+    lateinit var btnSelesai : LinearLayout
+    lateinit var tvTimer  : TextView
+    lateinit var contentView  : LinearLayout
+    private lateinit var webView: WebView
+    private lateinit var progressBar: ProgressBar
+    private lateinit var btnYakin: Button
+    private lateinit var btnKembali: Button
+    private lateinit var lyKonfirm: RelativeLayout
+    var durasi = ""
+    var idUjian = ""
+    private lateinit var pres: SharedPreferences
+    private lateinit var handler: Handler
+    lateinit var lockScreenTask: Runnable
+    private var test_lock = false
+
+    //BATAS OLD
+    /*
     private val problemText = ""
     private var captionTextView: TextView? = null
     private var videoView: VideoView? = null
@@ -73,11 +98,162 @@ class LockScreenActivity() : AppCompatActivity() {
      lateinit var wakeLock: WakeLock
     private var test_lock = false
     private var password: String? = null
-    private lateinit var webView: WebView
+     */
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_lock_screen)
+
+        initLock()
+        initView()
+        initClick()
         initWebview()
+        initIntent()
+        initTimer()
+    }
+    private fun initView(){
+        btnRefresh = findViewById(R.id.btnRefresh)
+        btnSelesai = findViewById(R.id.btnSelesai)
+        tvTimer = findViewById(R.id.tvTimer)
+        contentView = findViewById(R.id.contentView)
+        webView = findViewById(R.id.webView)
+        progressBar = findViewById(R.id.progressBar)
+        btnYakin = findViewById(R.id.btnYakin)
+        btnKembali = findViewById(R.id.btnKembali)
+        lyKonfirm = findViewById(R.id.lyKonfirm)
+    }
+    private fun initClick(){
+        btnRefresh.setOnClickListener {
+            btnRefresh.isEnabled = false
+            progressBar.visibility = View.VISIBLE
+            webView.reload()
+        }
+        btnSelesai.setOnClickListener {
+            lyKonfirm.visibility = View.VISIBLE
+        }
+        btnKembali.setOnClickListener {
+            lyKonfirm.visibility = View.GONE
+        }
+        btnYakin.setOnClickListener {
+            updateFirebase("DetailActivity", FirebaseFirestore.getInstance(), "ujian",
+                idUjian, hashMapOf("status" to "Selesai"))
+            { unlockLockScreen(test_lock, this, this) }
+        }
+    }
+    private fun initIntent(){
+        durasi = intent.getStringExtra("durasi").toString()
+        idUjian = intent.getStringExtra("documentId").toString()
+    }
+    private fun initTimer(){
+        startTimer(contentView,durasi.toInt(), tvTimer, idUjian,this,test_lock,this)
+    }
+    fun initWebview() {
+        /// Konfigurasi WebView
+        webView.settings.javaScriptEnabled = true
+
+        // Memuat URL awal
+        loadWebPage("https://www.example.com")
+
+        // Mengaktifkan WebViewClient
+        webView.webViewClient = object : WebViewClient() {
+            override fun onPageFinished(view: WebView?, url: String?) {
+                progressBar.visibility = View.GONE
+                btnRefresh.isEnabled = true
+            }
+        }
+
+        // Mengaktifkan WebChromeClient untuk loading bar
+        webView.webChromeClient = object : WebChromeClient() {
+            override fun onProgressChanged(view: WebView?, newProgress: Int) {
+                progressBar.progress = newProgress
+            }
+        }
+    }
+    private fun loadWebPage(url: String) {
+        webView.loadUrl(url)
+    }
+    private fun initLock(){
+        pres = getSharedPreferences("setting", 0)
+        test_lock = intent.getBooleanExtra("test_lock", false)
+        lockScreenTask = LockPhone(this)
+        handler = Handler(Looper.getMainLooper())
+    }
+    private inner class LockPhone internal constructor(private val activity: LockScreenActivity) :
+        Runnable {
+        override fun run() {
+//            DevicePolicyManager manager = ((DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE));
+//            manager.lockNow();
+        }
+    }
+
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        hideNavigationBar()
+    }
+
+    private fun hideNavigationBar() {
+        val decorView = this.window.decorView
+        val uiOptions = (View.SYSTEM_UI_FLAG_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN)
+        val timer = Timer()
+        val task: TimerTask = object : TimerTask() {
+            override fun run() {
+                runOnUiThread { decorView.systemUiVisibility = uiOptions }
+            }
+        }
+        timer.scheduleAtFixedRate(task, 1, 2)
+    }
+
+    override fun onAttachedToWindow() {
+        if (Build.VERSION.SDK_INT >= 27) {
+            setShowWhenLocked(true)
+            setTurnScreenOn(true)
+            window.addFlags(
+                WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED
+            )
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+            //            KeyguardManager keyguardManager = (KeyguardManager) getSystemService(Context.KEYGUARD_SERVICE);
+//            keyguardManager.requestDismissKeyguard(this, null);
+            val keyguardManager: KeyguardManager? =
+                getSystemService(KEYGUARD_SERVICE) as KeyguardManager
+            keyguardManager?.requestDismissKeyguard(this, null)
+        } else {
+            window.addFlags(
+                (WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_DISMISS_KEYGUARD or
+                        WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON or
+                        WindowManager.LayoutParams.FLAG_SHOW_WHEN_LOCKED)
+            )
+            window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+        }
+        super.onAttachedToWindow()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        handler!!.postDelayed((lockScreenTask)!!, (10 * 1000).toLong())
+    }
+
+    override fun onStop() {
+        super.onStop()
+        handler!!.removeCallbacks((lockScreenTask)!!)
+    }
+
+    override fun onPause() {
+        super.onPause()
+    }
+
+    override fun onBackPressed() {}
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        return false
+    }
+
+    // BATAS LAMA
+    /*
+    fun initOld(){
         pres = getSharedPreferences("setting", 0)
         password = pres.getString("passWord", "")
         test_lock = intent.getBooleanExtra("test_lock", false)
@@ -219,16 +395,6 @@ class LockScreenActivity() : AppCompatActivity() {
         forgotPass = findViewById<ImageView>(R.id.forgotPass)
         forgotPass.setOnClickListener(View.OnClickListener { dialogQuestion() })
     }
-
-    fun initWebview() {
-        webView = findViewById<WebView>(R.id.webView)
-        //webview google.com
-        webView.loadUrl("https://google.com")
-        webView.setWebViewClient(WebViewClient())
-        webView.getSettings().javaScriptEnabled = true
-        webView.getSettings().domStorageEnabled = true
-    }
-
     private fun showRateDialog() {
         val rateMeDialog = RateMeDialog.Builder(packageName, getString(R.string.app_name))
             .setHeaderBackgroundColor(resources.getColor(R.color.dialog_primary))
@@ -443,4 +609,6 @@ class LockScreenActivity() : AppCompatActivity() {
             context.startActivity(intent)
         }
     }
+
+     */
 }
