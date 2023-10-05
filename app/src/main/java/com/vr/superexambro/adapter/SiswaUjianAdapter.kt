@@ -9,18 +9,20 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.vr.superexambro.R
+import com.vr.superexambro.helper.calculateRemainingTime
 import com.vr.superexambro.helper.convertStringToDate
 import com.vr.superexambro.helper.formatDateToIndonesian
+import com.vr.superexambro.helper.startTimerSiswa
 import com.vr.superexambro.model.PaketModel
+import com.vr.superexambro.model.UjianModel
 import java.util.Locale
 
 
-class UjianAdapter(
-    private var dataList: MutableList<PaketModel>,
+class SiswaUjianAdapter(
+    private var dataList: MutableList<UjianModel>,
     val context: Context,
-    private val onEditClickListener: (PaketModel) -> Unit,
-) : RecyclerView.Adapter<UjianAdapter.DataViewHolder>() {
-    public var filteredDataList: MutableList<PaketModel> = mutableListOf()
+) : RecyclerView.Adapter<SiswaUjianAdapter.DataViewHolder>() {
+    public var filteredDataList: MutableList<UjianModel> = mutableListOf()
     init {
         filteredDataList.addAll(dataList)
     }
@@ -36,11 +38,11 @@ class UjianAdapter(
         if (query !== null || query !=="") {
             val lowerCaseQuery = query.toLowerCase(Locale.getDefault())
             for (data in dataList) {
-                val nam = data.namaUjian?.toLowerCase(Locale.getDefault())?.contains(lowerCaseQuery)
+                val nam = data.namaSiswa?.toLowerCase(Locale.getDefault())?.contains(lowerCaseQuery)
                 Log.d("Kunci ", lowerCaseQuery)
                 if (nam == true) {
                     filteredDataList.add(data)
-                    Log.d("Ada ", data.namaUjian.toString())
+                    Log.d("Ada ", data.namaSiswa.toString())
                 }
             }
         } else {
@@ -61,25 +63,20 @@ class UjianAdapter(
 
     override fun onBindViewHolder(holder: DataViewHolder, position: Int) {
         val currentData = filteredDataList[position]
-        holder.tvNamaUjian.text = currentData.namaUjian
-        holder.tvMapel.text = currentData.mapel
-        holder.tvKodeUjian.text = currentData.shortUrl
-        val date = convertStringToDate(currentData.created_at!!,"yyyy-MM-dd HH:mm:ss")
-        holder.tvTanggal.text = formatDateToIndonesian(date!!)
-        //holder.tvTanggal.text = date.toString()
-        holder.tvDurasi.text = currentData.durasi + " menit"
-        holder.tvKelas.text = currentData.kelas
-
-        holder.btnUbah.setOnClickListener { onEditClickListener(currentData) }
+        holder.tvNamaSiswa.text = currentData.namaSiswa
+        holder.tvStatus.text = currentData.status
+        holder.tvTanggal.text = formatDateToIndonesian(convertStringToDate(currentData.waktuMulai.toString(),"dd MMMM yyyy")!!)
+        if (currentData.status == "Selesai"){
+            holder.tvDurasi.text = "00:00:00"
+        }else{
+            startTimerSiswa( calculateRemainingTime(currentData.waktuMulai!!,currentData.durasi!!.toLong()).toInt(),holder.tvDurasi)
+        }
     }
 
     inner class DataViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val tvNamaUjian: TextView = itemView.findViewById(R.id.tvNamaUjian)
-        val tvMapel: TextView = itemView.findViewById(R.id.tvMapel)
-        val tvKodeUjian: TextView = itemView.findViewById(R.id.tvKodeUjian)
+        val tvNamaSiswa: TextView = itemView.findViewById(R.id.tvNamaSiswa)
+        val tvStatus: TextView = itemView.findViewById(R.id.tvStatus)
         val tvTanggal: TextView = itemView.findViewById(R.id.tvTanggal)
         val tvDurasi: TextView = itemView.findViewById(R.id.tvDurasi)
-        val tvKelas: TextView = itemView.findViewById(R.id.tvKelas)
-        val btnUbah: LinearLayout = itemView.findViewById(R.id.btnUbah)
     }
 }

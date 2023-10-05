@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/contentView"
     tools:context=".SplashActivity">
     <RelativeLayout
         android:layout_width="match_parent"
@@ -22,7 +23,7 @@
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@mipmap/ic_launcher" />
+                app:srcCompat="@drawable/ic_logo" />
         </LinearLayout>
         <LinearLayout
             android:layout_width="match_parent"
@@ -46,15 +47,84 @@
                 android:id="@+id/progressBar"
                 app:rcBackgroundColor="@color/gray"
                 app:rcMax="100"
-                app:rcProgress="10"
                 app:rcProgressColor="@color/colorPrimaryDark"
-                app:rcTextProgress="89"
+                app:rcTextProgress="10"
+                app:rcProgress="10"
                 app:rcAnimationEnable="true"
                 app:rcAnimationSpeedScale="1"
                 app:rcTextProgressColor="@color/colorBlack"
                 app:rcTextProgressSize="@dimen/_9sdp"
                 />
         </LinearLayout>
-        <include layout="@layout/cek_koneksi"/>
+        <androidx.coordinatorlayout.widget.CoordinatorLayout
+            android:id="@+id/noInternet"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                >
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/colorBlack"
+                    android:alpha="0.8"/>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:padding="@dimen/_9sdp">
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/cardView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_margin="@dimen/_10sdp"
+                        android:padding="@dimen/_10sdp"
+                        app:cardCornerRadius="@dimen/_10sdp"
+                        app:cardElevation="@dimen/_10sdp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:padding="@dimen/_9sdp"
+                            android:orientation="vertical">
+                            <ImageView
+                                android:layout_width="@dimen/_70sdp"
+                                android:layout_height="@dimen/_70sdp"
+                                android:background="@drawable/ic_wifi"
+                                android:layout_gravity="center"
+                                android:backgroundTint="@color/merah_sedang"/>
+                            <TextView
+                                android:id="@+id/txt_koneksi"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:gravity="center"
+                                android:text="@string/tidak_ada_koneksi_internet"
+                                android:textColor="@color/colorPrimary"
+                                android:textSize="@dimen/_11sdp" />
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btn_coba_lagi"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_10sdp"
+                                android:background="@drawable/rounded_button_background"
+                                android:backgroundTint="@color/biru_sedang"
+                                android:text="@string/coba_lagi"
+                                android:textColor="@color/colorWhite" />
+                            <androidx.appcompat.widget.AppCompatButton
+                                android:id="@+id/btn_keluar"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/_10sdp"
+                                android:background="@drawable/rounded_button_background"
+                                android:backgroundTint="@color/merah_sedang"
+                                android:text="@string/keluar"
+                                android:textColor="@color/colorWhite" />
+                        </LinearLayout>
+                    </androidx.cardview.widget.CardView>
+                </RelativeLayout>
+            </RelativeLayout>
+        </androidx.coordinatorlayout.widget.CoordinatorLayout>
     </RelativeLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

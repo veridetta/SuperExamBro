@@ -40,10 +40,8 @@ class SiswaActivity : AppCompatActivity() {
             }
         }
         btnCek.setOnClickListener{
-            if (inputCheck()){
-                val intent =  Intent(this, IzinActivity::class.java)
-                startActivity(intent)
-            }
+            val intent =  Intent(this, IzinActivity::class.java)
+            startActivity(intent)
         }
     }
     private fun inputCheck():Boolean{

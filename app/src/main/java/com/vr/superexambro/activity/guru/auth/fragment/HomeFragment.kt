@@ -82,7 +82,7 @@ class HomeFragment : Fragment() {
         shimmerContainer.startShimmer() // Start shimmer effect
         GlobalScope.launch(Dispatchers.IO) {
             try {
-                val result = db.collection("paket").whereEqualTo("uid", uid).get().await()
+                val result = db.collection("paket").whereEqualTo("userId", uid).get().await()
                 val datas = mutableListOf<PaketModel>()
                 for (document in result) {
                     val data = document.toObject(PaketModel::class.java)

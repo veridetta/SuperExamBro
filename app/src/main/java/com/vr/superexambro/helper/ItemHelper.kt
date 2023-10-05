@@ -60,7 +60,7 @@ fun formatDateToIndonesian(date: Date): String {
 }
 fun convertStringToDate(dateString: String, formatPattern: String): Date? {
     try {
-        val dateFormat = SimpleDateFormat(formatPattern, Locale.getDefault())
+        val dateFormat = SimpleDateFormat(formatPattern, Locale("id", "ID"))
         return dateFormat.parse(dateString)
     } catch (e: Exception) {
         e.printStackTrace()
@@ -94,7 +94,57 @@ fun startTimer(view:View,waktudalammenit: Int, textView: TextView, documentId: S
     countDownTimer?.start()
     timerRunning = true
 }
+fun startTimerSiswa(waktudalammenit: Int, textView: TextView) {
+    val totalMillis = waktudalammenit * 60000 // Konversi menit ke milidetik (1 menit = 60000 ms)
+    countDownTimer?.cancel()
+    countDownTimer = object : CountDownTimer(totalMillis.toLong(), 1000) {
+        override fun onTick(millisUntilFinished: Long) {
+            timeLeftInMillis = millisUntilFinished
+            updateCountdownText(textView)
+        }
+        override fun onFinish() {
+            timerRunning = false
+            // Timer selesai
+            textView.text = "Selesai"
+        }
+    }
+    countDownTimer?.start()
+    timerRunning = true
+}
+fun calculateRemainingTime(workDate: String, durationInMinutes: Long): Long {
+    // Format tanggal pengerjaan
+    val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
 
+    try {
+        // Parse tanggal pengerjaan ke dalam objek Date
+        val workDateTime = dateFormat.parse(workDate)
+
+        // Hitung selisih waktu antara tanggal pengerjaan dan waktu sekarang dalam milidetik
+        val currentTimeMillis = System.currentTimeMillis()
+        val workTimeMillis = workDateTime?.time ?: 0
+        var timeDifferenceMillis = currentTimeMillis - workTimeMillis
+
+        // Konversi durasi dalam menit ke milidetik
+        val durationMillis = durationInMinutes * 60 * 1000
+
+        // Jika selisih waktu kurang dari 0, set ke 0
+        if (timeDifferenceMillis < 0) {
+            timeDifferenceMillis = 0
+        }
+
+        // Mengembalikan selisih waktu atau 0 jika durasi tidak bersisa
+        return if (timeDifferenceMillis < durationMillis) {
+            durationMillis - timeDifferenceMillis
+        } else {
+            0
+        }
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }
+
+    // Jika terjadi kesalahan, kembalikan 0
+    return 0
+}
  fun updateCountdownText(textView: TextView) {
     val hours = (timeLeftInMillis / 3600000).toInt()
     val minutes = ((timeLeftInMillis % 3600000) / 60000).toInt()
@@ -126,3 +176,4 @@ fun unlockLockScreen(test_lock:Boolean,context: Context, activity: AppCompatActi
         activity.finish()
     }
 }
+

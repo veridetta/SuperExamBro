@@ -52,7 +52,7 @@ class RoleActivity : AppCompatActivity() {
         }
         cardGuru.setOnClickListener {
             //pindah ke activity guru
-            intent = intent.setClass(this, GuruActivity::class.java)
+            intent = intent.setClass(this, LoginActivity::class.java)
             startActivity(intent)
             finish()
         }

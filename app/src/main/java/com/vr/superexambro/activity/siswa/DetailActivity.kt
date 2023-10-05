@@ -23,7 +23,10 @@ import com.vr.superexambro.helper.addMinutesToCurrentDate
 import com.vr.superexambro.helper.generateRandomString
 import com.vr.superexambro.helper.getCurrentDate
 import com.vr.superexambro.helper.showSnackBar
+import com.vr.superexambro.lockactivity.ChangPassWordActivity
 import com.vr.superexambro.lockactivity.LockScreenActivity
+import com.vr.superexambro.lockactivity.MainActivity
+import com.vr.superexambro.lockutils.LockScreen
 import com.vr.superexambro.model.PaketModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -52,6 +55,7 @@ class DetailActivity : AppCompatActivity() {
     var shortUrl = ""
     var namaSiswa = ""
     var paketId = ""
+    var url = ""
 
     private val mFirestore = FirebaseFirestore.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -117,10 +121,13 @@ class DetailActivity : AppCompatActivity() {
                         durasi = data.durasi.toString()
                         guru = data.namaGuru.toString()
                         paketId = data.uid.toString()
+                        url = data.url.toString()
                         Log.d(TAG, "Datanya : ${document.id} => ${document.data}")
                     }
-                    lyLoad.visibility = View.GONE
-                    initData()
+                    runOnUiThread {
+                        lyLoad.visibility = View.GONE
+                        initData()
+                    }
                 }
 
             } catch (e: Exception) {
@@ -136,7 +143,7 @@ class DetailActivity : AppCompatActivity() {
             "namaSiswa" to namaSiswa,
             "waktuMulai" to getCurrentDate(),
             "waktuSelesai" to addMinutesToCurrentDate(durasi.toInt()),
-            "status" to "Mengerjakan",
+            "status" to "Sedang Mengerjakan",
             "durasi" to durasi,
             "created_at" to getCurrentDate(),
         )
@@ -145,19 +152,24 @@ class DetailActivity : AppCompatActivity() {
             .add(ujianData as Map<String, Any>)
             .addOnSuccessListener { documentReference ->
                 showSnackBar(contentView,"Berhasil menyimpan data")
-                // Inisialisasi PowerManager
-                val powerManager = getSystemService(Context.POWER_SERVICE) as PowerManager
-                // Buat wakelock untuk mencegah perangkat tidur
-                val wakeLock = powerManager.newWakeLock(
-                    PowerManager.SCREEN_BRIGHT_WAKE_LOCK or PowerManager.ACQUIRE_CAUSES_WAKEUP,
-                    "MyApp:WakeLock"
-                )
-                // Mengaktifkan wakelock
-                wakeLock.acquire()
-                val myIntent = Intent(applicationContext, LockScreenActivity::class.java)
-                myIntent.putExtra("test_lock", false)
+                if (LockScreen.getInstance(this)!!.isActive) {
+                    LockScreen.getInstance(this)!!.deactivate()
+                    val settings = getSharedPreferences("setting", 0)
+                    val edit = settings.edit()
+                    edit.putBoolean("lock", false)
+                    edit.commit()
+                } else {
+                        LockScreen.getInstance(this)!!.active()
+                        val settings = getSharedPreferences("setting", 0)
+                        val edit = settings.edit()
+                        edit.putBoolean("lock", true)
+                        edit.commit()
+                }
                 //put document id
+                val myIntent = Intent(applicationContext, LockScreenActivity::class.java)
+                myIntent.putExtra("test_lock", true)
                 myIntent.putExtra("documentId", documentReference.id)
+                myIntent.putExtra("url", url)
                 myIntent.putExtra("durasi", ujianData["durasi"].toString())
                 startActivity(myIntent)
                 //kemudian kembali normal saat selesai tes

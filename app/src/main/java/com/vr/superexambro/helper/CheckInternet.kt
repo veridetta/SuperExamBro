@@ -7,19 +7,21 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import com.vr.superexambro.R
 
 fun isInternetAvailable(context: Context, viewId: Int): Boolean {
-    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE)
-            as ConnectivityManager
-    val networkInfo = connectivityManager.activeNetworkInfo
-    if (networkInfo == null || !networkInfo.isConnected || !networkInfo.isAvailable) {
-        val noInternetLayout = (context as AppCompatActivity).findViewById<View>(viewId)
+    val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+    val network = connectivityManager.activeNetwork
+    val networkInfo = connectivityManager.getNetworkInfo(network)
+
+    return if (networkInfo == null || !networkInfo.isConnected || !networkInfo.isAvailable) {
+        val noInternetLayout = (context as AppCompatActivity).findViewById<CoordinatorLayout>(viewId)
         Toast.makeText(context, "No Internet Connection", Toast.LENGTH_LONG).show()
         noInternetLayout.visibility = View.VISIBLE
-        return false
+        false
     } else {
-        return true
+        true
     }
 }
 fun initNoInternetLayout(context: Context, viewId: Int){

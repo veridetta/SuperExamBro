@@ -190,7 +190,8 @@ class MainActivity : AppCompatActivity() {
         preview = findViewById<ImageView>(R.id.preview)
         preview.setOnClickListener(View.OnClickListener { view -> //                showInterFb(MainActivity.this);
             if (passWord == "") {
-                val myIntent = Intent(view.context, ChangPassWordActivity::class.java)
+                val myIntent = Intent(applicationContext, LockScreenActivity::class.java)
+                myIntent.putExtra("test_lock", true)
                 startActivity(myIntent)
             } else {
                 val myIntent = Intent(applicationContext, LockScreenActivity::class.java)

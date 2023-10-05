@@ -15,8 +15,10 @@ import com.google.firebase.appcheck.ktx.appCheck
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.ktx.initialize
 import com.vr.superexambro.activity.RoleActivity
+import com.vr.superexambro.activity.guru.auth.GuruActivity
 import com.vr.superexambro.helper.initNoInternetLayout
 import com.vr.superexambro.helper.isInternetAvailable
+import com.vr.superexambro.helper.showSnackBar
 import com.vr.superexambro.lockactivity.MainActivity
 
 class SplashActivity : AppCompatActivity() {
@@ -24,8 +26,10 @@ class SplashActivity : AppCompatActivity() {
     //lateinit
     lateinit var sharedPreferences: SharedPreferences
     lateinit var editor: SharedPreferences.Editor
-    var isLogin: Boolean = false
+    lateinit var contentView: CoordinatorLayout
     lateinit var progressBar : TextRoundCornerProgressBar
+    lateinit var lyNokonek : CoordinatorLayout
+    var isLogin: Boolean = false
     var isKoneksi: Boolean = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,41 +39,54 @@ class SplashActivity : AppCompatActivity() {
             DebugAppCheckProviderFactory.getInstance(),
         )
         initView()
-
+        checkKoneksi()
         if (isKoneksi){
             //jika ada koneksi
+            lyNokonek.visibility = CoordinatorLayout.GONE
+            xprogressBar()
             checkLogin()
-            progressBar.setProgress(100)
         }else{
             //jika tidak ada koneksi
-            isInternetAvailable(this, R.id.noInternet)
+            lyNokonek.visibility = CoordinatorLayout.VISIBLE
+            showSnackBar(contentView, "Tidak ada koneksi internet")
         }
     }
 
     fun initView(){
         progressBar = findViewById(R.id.progressBar)
-        initNoInternetLayout(this, R.id.noInternet)
-        isKoneksi = isInternetAvailable(this, R.id.noInternet)
+        contentView = findViewById(R.id.contentView)
+        lyNokonek = findViewById(R.id.noInternet)
+        //initNoInternetLayout(this, R.id.noInternet)
     }
-
+    fun checkKoneksi(){
+        val connectivityManager = getSystemService(CONNECTIVITY_SERVICE) as ConnectivityManager
+        val network = connectivityManager.activeNetwork
+        val networkInfo = connectivityManager.getNetworkInfo(network)
+        if (networkInfo == null || !networkInfo.isConnected || !networkInfo.isAvailable) {
+            isKoneksi = false
+        } else {
+            isKoneksi = true
+        }
+    }
     fun checkLogin(){
         sharedPreferences = getSharedPreferences("MyPrefs", MODE_PRIVATE)
         editor = sharedPreferences.edit()
         isLogin = sharedPreferences.getBoolean("isLogin", false)
         if (isLogin){
             //jika sudah login
-            //pindah ke main activity
-            intent = intent.setClass(this, RoleActivity::class.java)
+            progressBar.setProgress(100)
+            intent = intent.setClass(this, GuruActivity::class.java)
             startActivity(intent)
             finish()
         }else{
             //jika belum login
-            intent = intent.setClass(this, MainActivity::class.java)
+            progressBar.setProgress(100)
+            intent = intent.setClass(this, RoleActivity::class.java)
             startActivity(intent)
             finish()
         }
     }
-    fun progressBar(){
+    fun xprogressBar(){
         //progress bar
         progressBar.setMax(100)
         progressBar.setProgress(0)

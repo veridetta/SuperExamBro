@@ -120,7 +120,7 @@
                                     android:layout_weight="1"
                                     android:hint="Link Kode"
                                     android:maxLines="1"
-                                    android:inputType="textPassword"
+                                    android:inputType="text"
                                     android:background="@null" />
 
                             </LinearLayout>
@@ -134,6 +134,7 @@
                             android:textSize="@dimen/_15sdp"
                             android:layout_marginTop="16dp"
                             android:textColor="@color/white"
+                            android:maxLines="1"
                             android:padding="@dimen/_8sdp"
                             android:backgroundTint="@color/biru_sedang"
                             android:background="@drawable/rounded_button_background" />
